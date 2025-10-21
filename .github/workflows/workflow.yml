@@ -1,0 +1,55 @@
+name: Spring Boot CI/CD (Maven)
+
+on:
+  push:
+    branches: [ "main" ]  # main 브랜치에 push될 때 실행
+
+jobs:
+  build:
+    name: 🔨 Build and Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1️⃣ 코드 체크아웃
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2️⃣ JDK 21 설치
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+
+      # 3️⃣ Maven 빌드
+      - name: Build with Maven
+        run: mvn clean package -DskipTests
+
+      # 4️⃣ 빌드 결과 확인
+      - name: Show built JAR
+        run: ls -lh target/*.jar
+
+      # 5️⃣ 서버로 JAR 파일 전송
+      - name: 📦 Copy JAR to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          port: ${{ secrets.SERVER_PORT }}
+          source: "target/*.jar"
+          target: "/home/backend/be11-team3/gateway"
+
+      # 6️⃣ 서버에서 배포 스크립트 실행
+      - name: 🚀 Run deploy.sh on server
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          port: ${{ secrets.SERVER_PORT }}
+          script: |
+            cd /home/backend/be11-team3/gateway
+            chmod +x deploy.sh
+            bash -lc './deploy.sh'
