@@ -1,11 +1,6 @@
 server:
   port: 8080
 
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
-
 spring:
   application:
     name: gateway
@@ -22,5 +17,12 @@ spring:
                  - StripPrefix=1
 
                 ## TODO: 인증 서버 추가
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
 
 
