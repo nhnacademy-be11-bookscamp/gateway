@@ -4,25 +4,39 @@ server:
 spring:
   application:
     name: gateway
+  webflux:
+    codec:
+      max-in-memory-size: 5MB
   cloud:
     gateway:
+      httpclient:
+        netty:
+          connect-timeout: 5000
+          response-timeout: 15s
+          pool:
+            type: elastic
+          wiretap: true
       server:
-        webmvc:
+        webflux:
           routes:
             - id: api-service
               uri: lb://api-server
               predicates:
-                 - Path=/api-server/**
+                - Path=/api-server/**
               filters:
-                 - StripPrefix=1
+                - StripPrefix=1
 
                 ## TODO: 인증 서버 추가
 
 eureka:
+  instance:
+    hostname: localhost
+    prefer-ip-address: true
+    ip-address: 127.0.0.1
+    instance-id: ${spring.application.name}:${server.port}
   client:
     register-with-eureka: true
     fetch-registry: true
     service-url:
       defaultZone: http://localhost:8761/eureka/
-
 
