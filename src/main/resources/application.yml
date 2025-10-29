@@ -18,6 +18,8 @@ spring:
             # http://localhost:8082에서 요청이 오므로 이를 명시합니다.
             # 여러 개일 경우 쉼표로 구분합니다.
             allowedOrigins:
+              - "https://bookscamp.store"
+              - "https://www.bookscamp.store"
               - "http://localhost:8082"
               - "http://127.0.0.1:8082"
 
@@ -56,6 +58,18 @@ spring:
                 - Path=/api-server/**
               filters:
                 - StripPrefix=1
+            - id: auth-service
+              uri: lb://auth-server
+              predicates:
+                - Path = /auth-server/**
+              filters:
+                - StripPrefix=1
+            - id: gateway-service
+              uri: lb://api-server
+              predicates:
+                - Path=/gateway/api-server/**
+              filters:
+                - StripPrefix=2
 
                 ## TODO: 인증 서버 추가
 
