@@ -4,7 +4,7 @@ spring:
   profiles:
     active: prod
   webflux:
-    codec:
+    multipart:
       max-in-memory-size: 5MB
   cloud:
     gateway:
