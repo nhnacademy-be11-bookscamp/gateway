@@ -1,6 +1,9 @@
 spring:
   application:
     name: gateway
+  jwt:
+    secret: "저는개인적으로에스파의윈터가짱이라고생각합니다반박시그대말이다맞음"
+    cookie: Authorization
   profiles:
     active: prod
   webflux:
@@ -58,5 +61,4 @@ spring:
                 - Path=/gateway/api-server/**
               filters:
                 - StripPrefix=2
-
 
