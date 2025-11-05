@@ -1,30 +1,25 @@
-server:
-  port: 8080
-
 spring:
   application:
     name: gateway
+  jwt:
+    secret: "저는개인적으로에스파의윈터가짱이라고생각합니다반박시그대말이다맞음"
+    cookie: Authorization
+  profiles:
+    active: prod
   webflux:
-    codec:
+    multipart:
       max-in-memory-size: 5MB
   cloud:
     gateway:
       globalcors:
-        # 💡 [필수] CORS 정책을 적용할 경로 패턴입니다.
-        # 모든 경로에 적용하려면 '/**'를 사용합니다.
         corsConfigurations:
           '[/**]':
-            # 💡 [필수] 접근을 허용할 출처(Origin)를 지정합니다.
-            # http://localhost:8082에서 요청이 오므로 이를 명시합니다.
-            # 여러 개일 경우 쉼표로 구분합니다.
             allowedOrigins:
               - "https://bookscamp.store"
               - "https://www.bookscamp.store"
               - "http://localhost:8082"
               - "http://127.0.0.1:8082"
 
-            # 💡 [필수] 허용할 HTTP 메서드를 지정합니다.
-            # GET, POST, PUT, DELETE, OPTIONS 등을 포함합니다.
             allowedMethods:
               - GET
               - POST
@@ -32,15 +27,11 @@ spring:
               - DELETE
               - OPTIONS
 
-            # 💡 [선택] 요청 시 허용할 헤더를 지정합니다. '*'는 모든 헤더를 허용합니다.
             allowedHeaders:
               - "*"
 
-            # 💡 [선택] 자격 증명(쿠키, 인증 헤더) 전송을 허용할지 여부입니다.
-            # 프론트엔드가 쿠키나 Authorization 헤더를 보낼 경우 true로 설정해야 합니다.
             allowCredentials: true
 
-            # 💡 [선택] 브라우저가 pre-flight (OPTIONS) 응답을 캐시할 시간(초)을 지정합니다.
             maxAge: 3600 # 1시간
       httpclient:
         netty:
@@ -70,18 +61,4 @@ spring:
                 - Path=/gateway/api-server/**
               filters:
                 - StripPrefix=2
-
-                ## TODO: 인증 서버 추가
-
-eureka:
-  instance:
-    hostname: localhost
-    prefer-ip-address: true
-    ip-address: 127.0.0.1
-    instance-id: ${spring.application.name}:${server.port}
-  client:
-    register-with-eureka: true
-    fetch-registry: true
-    service-url:
-      defaultZone: http://localhost:8761/eureka/
 
