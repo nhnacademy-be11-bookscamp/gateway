@@ -20,7 +20,7 @@ public class AuthorizationFilter implements GlobalFilter, Ordered {
     private final JwtTokenProvider jwtTokenProvider;
     private static final List<String> EXCLUDED_PATHS = List.of(
             "/auth-server/login",
-            "/api-server/signup",
+            "/api-server/sign-up",
             "/public",
             "/login",
             "/api-server/member/check-id", 
