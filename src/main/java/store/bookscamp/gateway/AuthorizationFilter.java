@@ -24,7 +24,9 @@ public class AuthorizationFilter implements GlobalFilter, Ordered {
             "/public",
             "/login",
             "/api-server/member/check-id", 
-            "/api-server/categories"
+            "/api-server/categories",
+            "/api-server/books/like",
+            "/api-server/admin/category"
     );
 
     @Override
