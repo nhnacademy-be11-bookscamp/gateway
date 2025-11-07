@@ -20,6 +20,7 @@ public class AuthorizationFilter implements GlobalFilter, Ordered {
     private final JwtTokenProvider jwtTokenProvider;
     private static final List<String> EXCLUDED_PATHS = List.of(
             "/auth-server/login",
+            "/auth-server/admin/login",
             "/api-server/member/sign-up",
             "/public",
             "/login",
@@ -48,11 +49,11 @@ public class AuthorizationFilter implements GlobalFilter, Ordered {
 
         try {
             Claims claims = jwtTokenProvider.getClaims(jwtToken);
-            Long memberId = claims.get("memberId", Long.class);
+            Long id = claims.get("id", Long.class);
             String role = claims.get("role", String.class);
 
             ServerHttpRequest authorizedRequest = request.mutate()
-                    .header("X-User-ID", String.valueOf(memberId))
+                    .header("X-User-ID", String.valueOf(id))
                     .header("X-User-Role", role)
                     .build();
 
