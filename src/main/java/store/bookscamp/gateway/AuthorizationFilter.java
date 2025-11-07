@@ -49,11 +49,11 @@ public class AuthorizationFilter implements GlobalFilter, Ordered {
 
         try {
             Claims claims = jwtTokenProvider.getClaims(jwtToken);
-            Long id = claims.get("id", Long.class);
+            Long memberId = claims.get("memberId", Long.class);
             String role = claims.get("role", String.class);
 
             ServerHttpRequest authorizedRequest = request.mutate()
-                    .header("X-User-ID", String.valueOf(id))
+                    .header("X-User-ID", String.valueOf(memberId))
                     .header("X-User-Role", role)
                     .build();
 
