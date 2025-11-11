@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration scan="true" scanPeriod="30 seconds">
+
+    <!--Spring 속성 가져오기-->
+    <springProperty scope="context" name="APP_NAME" source="spring.application.name"/>
+    <springProperty scope="context" name="PROFILE" source="spring.profiles.active"/>
+
+    <!--로그 저장 경로-->
+    <property name="LOG_PATH" value="./logs/${APP_NAME:-api}-${PROFILE:-local}"/>
+
+    <!--콘솔 로그 패턴-->
+    <property name="CONSOLE_PATTERN"
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %highlight(%-5level) %cyan(%logger{36}) %msg%n"/>
+    <!--파일 로그 패턴-->
+    <property name="FILE_PATTERN"
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} %msg%n"/>
+
+    <!--dev-->
+    <springProfile name="dev">
+
+        <!--콘솔 출력용 Appender -->
+        <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder>
+                <pattern>${CONSOLE_PATTERN}</pattern>
+            </encoder>
+        </appender>
+
+        <!--전체 로그 파일 저장용(기간 짧게)-->
+        <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <file>${LOG_PATH}/app.log</file>
+
+            <!--파일 롤링 정책-->
+            <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+                <fileNamePattern>${LOG_PATH}/app.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+                <maxFileSize>20MB</maxFileSize>
+                <maxHistory>7</maxHistory>
+                <totalSizeCap>1GB</totalSizeCap>
+            </rollingPolicy>
+            <encoder>
+                <pattern>${FILE_PATTERN}</pattern>
+            </encoder>
+        </appender>
+
+        <!--WARN 이상의 로그만 따로 저장-->
+        <appender name="WARN_ERROR_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <file>${LOG_PATH}/warn-error.log</file>
+
+            <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+                <level>WARN</level>
+            </filter>
+            <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+                <fileNamePattern>${LOG_PATH}/warn-error.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+                <maxFileSize>20MB</maxFileSize>
+                <maxHistory>14</maxHistory>
+                <totalSizeCap>2GB</totalSizeCap>
+            </rollingPolicy>
+            <encoder>
+                <pattern>${FILE_PATTERN}</pattern>
+            </encoder>
+        </appender>
+
+        <!--루트 로그 설정 (전체 출력 기본값)-->
+        <root level="DEBUG">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="FILE"/>
+            <appender-ref ref="WARN_ERROR_FILE"/>
+        </root>
+    </springProfile>
+
+    <!--prod-->
+    <springProfile name="prod">
+
+        <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <file>${LOG_PATH}/app.log</file>
+            <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+                <fileNamePattern>${LOG_PATH}/app.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+                <maxFileSize>50MB</maxFileSize>
+                <maxHistory>30</maxHistory>
+                <totalSizeCap>5GB</totalSizeCap>
+            </rollingPolicy>
+            <encoder>
+                <pattern>${FILE_PATTERN}</pattern>
+            </encoder>
+        </appender>
+
+        <appender name="WARN_ERROR_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <file>${LOG_PATH}/warn-error.log</file>
+            <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+                <level>WARN</level>
+            </filter>
+            <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+                <fileNamePattern>${LOG_PATH}/warn-error.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+                <maxFileSize>50MB</maxFileSize>
+                <maxHistory>90</maxHistory>
+                <totalSizeCap>10GB</totalSizeCap>
+            </rollingPolicy>
+            <encoder>
+                <pattern>${FILE_PATTERN}</pattern>
+            </encoder>
+        </appender>
+
+        <!--비동기 처리를 위한-->
+        <appender name="ASYNC_FILE" class="ch.qos.logback.classic.AsyncAppender">
+            <appender-ref ref="FILE"/>
+            <queueSize>8192</queueSize>
+            <discardingThreshold>0</discardingThreshold>
+            <neverBlock>true</neverBlock>
+        </appender>
+
+        <root level="INFO">
+            <appender-ref ref="ASYNC_FILE"/>
+            <appender-ref ref="WARN_ERROR_FILE"/>
+        </root>
+    </springProfile>
+
+</configuration>
