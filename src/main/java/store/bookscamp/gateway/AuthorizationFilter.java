@@ -27,9 +27,12 @@ public class AuthorizationFilter implements GlobalFilter, Ordered {
             HttpMethod.GET, List.of(
                     "/api-server/books",
                     "/api-server/bookDetail/**",
-                    "/api-server/books/{bookId}",
+                    "/api-server/books/**",
                     "/api-server/categories",
-                    "/api-server/member/check-id"
+                    "/api-server/member/check-id",
+                    "/api-server/allBooks",
+                    "/api-server/coupon-issue/downloadable",
+                    "/api-server/coupon-issue/issue"
             ),
             HttpMethod.POST, List.of(
                     "/auth-server/login",
