@@ -60,7 +60,7 @@ jobs:
           target: "/home/backend/be11-team3/gateway"
 
       # 6️⃣ 서버에서 배포 스크립트 실행
-      - name: 🚀 Run deploy.sh on server
+      - name: 🚀 Run deploy.sh on server (10352)
         uses: appleboy/ssh-action@v0.1.10
         with:
           host: ${{ secrets.SERVER_HOST }}
@@ -70,4 +70,16 @@ jobs:
           script: |
             cd /home/backend/be11-team3/gateway
             chmod +x deploy.sh
-            bash -lc './deploy.sh'
+            bash -lc './deploy.sh 10352'
+
+      - name: 🚀 Run deploy.sh on server (10362)
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          port: ${{ secrets.SERVER_PORT }}
+          script: |
+            cd /home/backend/be11-team3/gateway
+            chmod +x deploy.sh
+            bash -lc './deploy.sh 13062'
