@@ -64,7 +64,7 @@ public class AuthorizationFilter implements GlobalFilter, Ordered {
         }
 
         if (jwtToken == null) {
-            return onError(exchange, "토큰이 존재하지 않습니다.", HttpStatus.UNAUTHORIZED);
+            return chain.filter(exchange);
         }
 
         try {
