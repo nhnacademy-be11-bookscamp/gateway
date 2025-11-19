@@ -5,6 +5,7 @@ import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.Ordered;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -16,6 +17,7 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 import java.util.List;
 
+@Profile("!test")
 @Component
 @RequiredArgsConstructor
 public class AuthorizationFilter implements GlobalFilter, Ordered {
