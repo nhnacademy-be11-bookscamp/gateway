@@ -1,64 +1,16 @@
 spring:
   application:
     name: gateway
-  jwt:
-    secret: "저는개인적으로에스파의윈터가짱이라고생각합니다반박시그대말이다맞음"
-    cookie: Authorization
   profiles:
     active: prod
-  webflux:
-    multipart:
-      max-in-memory-size: 5MB
+
+  config:
+    import: "optional:configserver:"
+
   cloud:
-    gateway:
-      globalcors:
-        corsConfigurations:
-          '[/**]':
-            allowedOrigins:
-              - "https://bookscamp.store"
-              - "https://www.bookscamp.store"
-              - "http://localhost:8082"
-              - "http://127.0.0.1:8082"
-
-            allowedMethods:
-              - GET
-              - POST
-              - PUT
-              - DELETE
-              - OPTIONS
-
-            allowedHeaders:
-              - "*"
-
-            allowCredentials: true
-
-            maxAge: 3600 # 1시간
-      httpclient:
-        netty:
-          connect-timeout: 5000
-          response-timeout: 15s
-          pool:
-            type: elastic
-          wiretap: true
-      server:
-        webflux:
-          routes:
-            - id: api-service
-              uri: lb://api-server
-              predicates:
-                - Path=/api-server/**
-              filters:
-                - StripPrefix=1
-            - id: auth-service
-              uri: lb://auth-server
-              predicates:
-                - Path=/auth-server/**
-              filters:
-                - StripPrefix=1
-            - id: gateway-service
-              uri: lb://api-server
-              predicates:
-                - Path=/gateway/api-server/**
-              filters:
-                - StripPrefix=2
+    config:
+      uri: http://localhost:10355        # Config Server 주소
+      fail-fast: true                    # Config 서버 연결 실패 시 즉시 종료
+      label: main                        # Config Repo 브랜치
+      profile: ${spring.profiles.active} # dev 또는 prod, 실행 시 지정
 
