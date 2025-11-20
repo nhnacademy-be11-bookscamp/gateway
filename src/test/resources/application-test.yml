@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: gateway-test
+
+  cloud:
+    config:
+      enabled: false
+      import-check:
+        enabled: false
+
