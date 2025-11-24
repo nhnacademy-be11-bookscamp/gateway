@@ -107,7 +107,7 @@
             <neverBlock>true</neverBlock>
         </appender>
 
-        <root level="INFO">
+        <root level="DEBUG">
             <appender-ref ref="ASYNC_FILE"/>
             <appender-ref ref="WARN_ERROR_FILE"/>
         </root>
