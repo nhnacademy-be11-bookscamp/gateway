@@ -24,6 +24,7 @@ public class AuthorizationFilter implements GlobalFilter, Ordered {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final AntPathMatcher pathMatcher = new AntPathMatcher();
+    private static final String AUTHORIZATION_HEADER = "Authorization";
 
     private static final Map<HttpMethod, List<String>> EXCLUDED_PATTERNS = Map.of(
             HttpMethod.GET, List.of(
@@ -55,14 +56,14 @@ public class AuthorizationFilter implements GlobalFilter, Ordered {
             return chain.filter(exchange);
         }
 
-        String authHeader = request.getHeaders().getFirst("Authorization");
+        String authHeader = request.getHeaders().getFirst(AUTHORIZATION_HEADER);
         String jwtToken = null;
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             jwtToken = authHeader.substring(7);
         }
-        else if (request.getCookies().getFirst("Authorization") != null) {
-            jwtToken = request.getCookies().getFirst("Authorization").getValue();
+        else if (request.getCookies().getFirst(AUTHORIZATION_HEADER) != null) {
+            jwtToken = request.getCookies().getFirst(AUTHORIZATION_HEADER).getValue();
         }
 
         if (jwtToken == null) {

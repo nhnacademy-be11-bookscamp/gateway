@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import java.nio.charset.StandardCharsets;
+import javax.crypto.SecretKey;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
@@ -14,7 +15,7 @@ import java.security.Key;
 @Component
 public class JwtTokenProvider {
 
-    private final Key key;
+    private final SecretKey key;
 
     public JwtTokenProvider(@Value("${spring.jwt.secret}") String secretKey) {
         byte[] keyBytes = secretKey.getBytes(StandardCharsets.UTF_8);
@@ -23,9 +24,9 @@ public class JwtTokenProvider {
 
     public Claims getClaims(String token) {
         return Jwts.parser()
-                .setSigningKey(key)
+                .verifyWith(key)
                 .build()
-                .parseClaimsJws(token)
-                .getBody();
+                .parseSignedClaims(token)
+                .getPayload();
     }
 }
